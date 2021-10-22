@@ -1,7 +1,7 @@
 odoo.define('web_readonly_bypass', function(require) {
     'use strict';
 
-    var data = require('web.data'),
+    var wdata = require('web.data'),
         pyeval = require('web.pyeval');
 
     var readonly_bypass = {
@@ -60,7 +60,7 @@ odoo.define('web_readonly_bypass', function(require) {
         },
     };
 
-    data.BufferedDataSet.include({
+    wdata.BufferedDataSet.include({
 
         init : function() {
             this._super.apply(this, arguments);
@@ -93,12 +93,12 @@ odoo.define('web_readonly_bypass', function(require) {
             var self = this;
             var context = pyeval.eval('contexts', self.context.get_eval_context());
             readonly_bypass.ignore_readonly(data, options, false, context);
-            return self._super(id,data,options);
+            return self._super(id,wdata,options);
         },
 
     });
 
-    data.DataSet.include({
+    wdata.DataSet.include({
         /*
         BufferedDataSet: case of 'add an item' into a form view
         */
@@ -136,7 +136,7 @@ odoo.define('web_readonly_bypass', function(require) {
 
     });
 
-    data.ProxyDataSet.include({
+    wdata.ProxyDataSet.include({
         /*
         ProxyDataSet: case of 'pop-up'
         */
@@ -154,7 +154,7 @@ odoo.define('web_readonly_bypass', function(require) {
          */
         create : function(data, options) {
             var self = this;
-            var context = pyeval.eval('contexts', self.context.get_eval_context());
+            var context = pyeval.eval('contexts', new wdata.CompoundContext(self.context).get_eval_context());
             readonly_bypass.ignore_readonly(data, options, true, context);
             return self._super(data,options);
         },
@@ -169,7 +169,7 @@ odoo.define('web_readonly_bypass', function(require) {
          */
         write : function(id, data, options) {
             var self = this;
-            var context = pyeval.eval('contexts', self.context.get_eval_context());
+            var context = pyeval.eval('contexts',new wdata.CompoundContext(self.context).get_eval_context());
             readonly_bypass.ignore_readonly(data, options, false, context);
             return self._super(id,data,options);
         },
