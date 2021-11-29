@@ -434,7 +434,7 @@ odoo.define('web_m2x_options.web_m2x_options', function (require) {
                         res_model: self.field.relation,
                         views: [[false, 'form']],
                         res_id: id,
-                        target: "new"
+                        target: "current"
                     });
                 }.bind(this));
             }else if(no_color_picker){
